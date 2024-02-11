@@ -1,0 +1,69 @@
+//Landing Page
+
+hero : {
+    img : string
+}
+
+catergory : {
+    name : string
+}
+
+image : {
+    imageURL : string
+}
+
+catergory_item : {
+    title : string,
+    price : number,
+    country : string,
+    city : string,
+    isPopular : boolean,
+    description : string,
+    imageId : [{_id : ObjectId}],
+    featureId :[{_id : ObjectId}]
+    activityId : [{_id : ObjectId}]
+}
+
+feature : {
+    name : string,
+    qty : number,
+    imageURL : string
+}
+
+activity : {
+    name : string,
+    type : string,
+    imageURL : string,
+    isPopular : boolean
+}
+
+
+//Page booking
+
+booking : {
+        bookingStartDate : date,
+        bookingEndDate : date,
+        itemID :[{
+            _id : ObjectId,
+            price : number,
+            night : nunmber
+        }]
+        memberId : [{_id, ObjectId}],
+        bankId : [{_id, ObjectId}],
+        proofPayment : string,
+        bankFrom : string,
+        accountHolder : string
+}
+
+member : {
+    firstName : string,
+    lastName : string,
+    email : string,
+    phoneNumber : number
+}
+
+bank : {
+    BankName : string,
+    nomorRekening : string,
+    name : string
+}
