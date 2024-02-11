@@ -12,7 +12,7 @@ image : {
     imageURL : string
 }
 
-catergory_item : {
+item : {
     title : string,
     price : number,
     country : string,
@@ -46,7 +46,7 @@ booking : {
         itemID :[{
             _id : ObjectId,
             price : number,
-            night : nunmber
+            night : number
         }]
         memberId : [{_id, ObjectId}],
         bankId : [{_id, ObjectId}],
