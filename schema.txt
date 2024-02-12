@@ -52,7 +52,8 @@ booking : {
         bankId : [{_id, ObjectId}],
         proofPayment : string,
         bankFrom : string,
-        accountHolder : string
+        accountHolder : string,
+        status: string
 }
 
 member : {
