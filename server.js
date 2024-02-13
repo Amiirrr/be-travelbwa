@@ -1,10 +1,9 @@
 import express from 'express'
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
-import path, { dirname } from 'path';
+import path from 'path';
 import cors from 'cors'
-import { fileURLToPath } from 'url';
-
+import router from './src/routes/index.js';
 
 const app = express();
 const port = 3000;
@@ -20,12 +19,12 @@ const __dirname = path.resolve();
 app.use(cookieParser()); //allow to access cookie
 app.use(bodyParser.urlencoded({ extended: false })) //allow request with format x-www-form-urlencoded
 app.use(bodyParser.json()) //allow request with format json
-
 //enable cors 
 app.use(cors({
     credentials: true,
     origin: ['http://localhost:5173', 'http://localhost:3000']
 }))
+app.use(router);
 
 // app.get('/', (req, res) => {
 //     res.send(__dirname)    
@@ -51,7 +50,6 @@ app.use(cors({
 
 app.listen(port, () => {
     console.log(`server is running on port ${port}`)
-    console.log(__dirname)
 })
 
 // catch 404 and forward to error handler
