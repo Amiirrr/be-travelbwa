@@ -10,12 +10,16 @@ const viewItem = (req, res) => {
 const viewBank = (req, res) => {
     res.render('admin/bank/view_bank');
 }
+const viewBooking = (req, res) => {
+    res.render('admin/booking/view_booking');
+}
 
 const adminController = {
     viewDashboard,
     viewCategory,
     viewItem,
-    viewBank
+    viewBank,
+    viewBooking
 }
 
 export default adminController;

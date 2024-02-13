@@ -7,5 +7,6 @@ admin.get('/dashboard', adminController.viewDashboard)
 admin.get('/category', adminController.viewCategory)
 admin.get('/item', adminController.viewItem)
 admin.get('/bank', adminController.viewBank)
+admin.get('/booking', adminController.viewBooking)
 
 export default admin
