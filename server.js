@@ -8,14 +8,8 @@ import router from './src/routes/index.js';
 const app = express();
 const port = 3000;
 
-// const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.resolve();
-// const __dirname = path.dirname(__filename);
-// const relativePath = path.relative(process.cwd(), __dirname).replace(/\\/g, '/');
-
-// const __dirname = process.cwd(); // Mengambil direktori kerja saat ini dari Node.js
-// const __dirname = import.meta.url; // Mengambil direktori kerja saat ini dari Node.js
-
+app.use(router);
 app.use(cookieParser()); //allow to access cookie
 app.use(bodyParser.urlencoded({ extended: false })) //allow request with format x-www-form-urlencoded
 app.use(bodyParser.json()) //allow request with format json
@@ -24,38 +18,10 @@ app.use(cors({
     credentials: true,
     origin: ['http://localhost:5173', 'http://localhost:3000']
 }))
-app.use(router);
-
-// app.get('/', (req, res) => {
-//     res.send(__dirname)    
-// })
-
-// app.get('/', (req, res) => {
-//     res.status(200).json({
-//         code: 200,
-//         status: 'OK',
-//         data: {
-//             message: 'server running'
-//         }
-//     })
-// })
-
-// app.get('*', (req, res) => {
-//     res.status(404).json({
-//         code: 404,
-//         status: 'NOT_FOUND',
-//         errors: [{ path: 'invalid path' }]
-//     })
-// })
 
 app.listen(port, () => {
     console.log(`server is running on port ${port}`)
 })
-
-// catch 404 and forward to error handler
-// app.use(function (req, res, next) {
-//     next(createError(404));
-// });
 
 app.set('views', path.join(__dirname, 'src', 'views'));
 app.set('view engine', 'ejs');
@@ -78,3 +44,33 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
+
+
+// app.use('/admin', admin);
+
+// app.get('/', (req, res) => {
+//     res.send(__dirname)
+// })
+
+// app.get('/', (req, res) => {
+//     res.status(200).json({
+//         code: 200,
+//         status: 'OK',
+//         data: {
+//             message: 'server running'
+//         }
+//     })
+// })
+
+// app.get('*', (req, res) => {
+//     res.status(404).json({
+//         code: 404,
+//         status: 'NOT_FOUND',
+//         errors: [{ path: 'invalid path' }]
+//     })
+// })
+
+// catch 404 and forward to error handler
+// app.use(function (req, res, next) {
+//     next(createError(404));
+// });
