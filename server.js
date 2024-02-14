@@ -4,11 +4,14 @@ import bodyParser from 'body-parser';
 import path from 'path';
 import cors from 'cors'
 import router from './src/routes/index.js';
+import connectDB from './src/config/db.js';
 
 const app = express();
 const port = 3000;
 
 const __dirname = path.resolve();
+
+
 app.use(router);
 app.use(cookieParser()); //allow to access cookie
 app.use(bodyParser.urlencoded({ extended: false })) //allow request with format x-www-form-urlencoded
@@ -31,7 +34,6 @@ app.use('/sb-admin-2', express.static(path.join(__dirname, 'node_modules/startbo
 
 // Penanganan rute untuk rute '/'
 app.get('/', (req, res) => {
-    // Render tampilan 'index.ejs'
     res.render('index');
 });
 // error handler
@@ -44,6 +46,9 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
+
+//connect database
+connectDB('mongodb://localhost:27017/db_travelbwa')
 
 
 // app.use('/admin', admin);
