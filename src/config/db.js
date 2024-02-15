@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 
 async function connectDB(MANGO_URL) {
     try {
-        // Koneksi ke MongoDB menggunakan mongoose.connect
         await mongoose.connect(MANGO_URL);
         console.log('MongoDB terhubung');
     } catch (error) {

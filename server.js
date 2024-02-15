@@ -11,7 +11,6 @@ const port = 3000;
 
 const __dirname = path.resolve();
 
-
 app.use(router);
 app.use(cookieParser()); //allow to access cookie
 app.use(bodyParser.urlencoded({ extended: false })) //allow request with format x-www-form-urlencoded
@@ -49,6 +48,8 @@ app.use(function (err, req, res, next) {
 
 //connect database
 connectDB('mongodb://localhost:27017/db_travelbwa')
+
+
 
 
 // app.use('/admin', admin);
