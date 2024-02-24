@@ -11,10 +11,11 @@ const port = 3000;
 
 const __dirname = path.resolve();
 
-app.use(router);
+
 app.use(cookieParser()); //allow to access cookie
 app.use(bodyParser.urlencoded({ extended: false })) //allow request with format x-www-form-urlencoded
 app.use(bodyParser.json()) //allow request with format json
+app.use(router);
 //enable cors 
 app.use(cors({
     credentials: true,
@@ -24,6 +25,7 @@ app.use(cors({
 app.listen(port, () => {
     console.log(`server is running on port ${port}`)
 })
+
 
 app.set('views', path.join(__dirname, 'src', 'views'));
 app.set('view engine', 'ejs');
@@ -47,9 +49,7 @@ app.use(function (err, req, res, next) {
 });
 
 //connect database
-connectDB('mongodb://localhost:27017/db_travelbwa')
-
-
+connectDB('mongodb://127.0.0.1/db-travelbwa')
 
 
 // app.use('/admin', admin);
