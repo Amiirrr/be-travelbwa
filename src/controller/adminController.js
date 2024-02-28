@@ -3,8 +3,10 @@ import Category from '../models/category.js'
 const viewDashboard = (req, res) => {
     res.render('admin/dashboard/view_dashboard');
 }
-const viewCategory = (req, res) => {
-    res.render('admin/category/view_category');
+const viewCategory = async (req, res) => {
+    const category = await Category.find();
+    // console.log(category)
+    res.render('admin/category/view_category', { category });
 }
 const AddCategory = async (req, res) => {
     const body = req.body
@@ -14,15 +16,8 @@ const AddCategory = async (req, res) => {
             name: body.name
         }
         console.log(payload)
-
         await Category.create(payload);
         res.redirect('/admin/category')
-
-        // res.status(201).json({
-        //     status: 201,
-        //     message: 'Success',
-        //     info: 'Category added successfully'
-        // });
 
     } catch (error) {
         console.log(error.message)
@@ -33,6 +28,45 @@ const AddCategory = async (req, res) => {
         })
     }
 }
+const UpdateCategory = async (req, res) => {
+    const { id, name } = req.body;
+    // const category = await Category.findOne({ _id: id })
+    // category.name = name;
+    // await category.save();
+    // console.log(category)  
+
+    try {
+        const payload = {
+            name: name
+        }
+        await Category.updateOne({ _id: id }, payload)
+        res.redirect('/admin/category')
+
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({
+            status: 500,
+            message: 'Internal server error',
+        });
+    }
+};
+
+const DeleteCategory = async (req, res) => {
+
+    try {
+        const { id } = req.params;
+        const category = await Category.deleteOne({ _id: id });
+        res.redirect('/admin/category')
+
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({
+            status: 500,
+            message: 'Internal server error',
+        });
+    }
+}
+
 
 const viewItem = (req, res) => {
     res.render('admin/item/view_item');
@@ -48,6 +82,8 @@ const adminController = {
     viewDashboard,
     viewCategory,
     AddCategory,
+    UpdateCategory,
+    DeleteCategory,
     viewItem,
     viewBank,
     viewBooking

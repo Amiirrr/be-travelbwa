@@ -6,9 +6,11 @@ const admin = express.Router();
 //dashboard
 admin.get('/dashboard', adminController.viewDashboard)
 
-//category
+//endpoint category
 admin.get('/category', adminController.viewCategory)
 admin.post('/category', adminController.AddCategory)
+admin.put('/category', adminController.UpdateCategory)
+admin.delete('/category/:id', adminController.DeleteCategory);
 
 //item
 admin.get('/item', adminController.viewItem)

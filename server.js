@@ -5,12 +5,14 @@ import path from 'path';
 import cors from 'cors'
 import router from './src/routes/index.js';
 import connectDB from './src/config/db.js';
+import methodOverride from 'method-override';
 
 const app = express();
 const port = 3000;
 
 const __dirname = path.resolve();
 
+app.use(methodOverride('_method'))
 
 app.use(cookieParser()); //allow to access cookie
 app.use(bodyParser.urlencoded({ extended: false })) //allow request with format x-www-form-urlencoded

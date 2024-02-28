@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
 <%- include('../../partials/header.ejs')%>
 
     <body id="page-top">
@@ -75,8 +73,16 @@
         </div>
 
         <%- include('./add_modal.ejs')%>
-            <%- include('../../partials/js.ejs')%>
+            <%- include('./edit_modal.ejs')%>
+                <%- include('../../partials/js.ejs')%>
 
-    </body>
-
-</html>
+                    <script>
+                        $('#dataTableCategory').on('click', '.button-update', function () {
+                            let id = $(this).data('id');
+                            let name = $(this).data('name');
+                            console.log(id + name)
+                            $('#edit-modal').modal('show');
+                            $('.name').val(name)
+                            $('.id').val(id)
+                        })
+                    </script>
