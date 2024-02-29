@@ -1,5 +1,7 @@
 import Category from '../models/category.js'
 import Bank from '../models/Bank.js'
+import fs from 'fs-extra'
+import path from 'path'
 
 // Dashboard
 const viewDashboard = (req, res) => {
@@ -131,13 +133,26 @@ const UpdateBank = async (req, res) => {
     const id = body.id;
 
     try {
-        const payload = {
-            BankName: body.BankName,
-            nomorRekening: body.nomorRekening,
-            name: body.name,
-            imageUrl: body.imageUrl,
+        if (req.file == undefined) {
+            const payload = {
+                bankName: body.bankName,
+                nomorRekening: body.nomorRekening,
+                name: body.name
+            }
+            console.log(payload)
+            await Bank.updateOne({ _id: id }, payload)
+        } else {
+            const bank = await Bank.findOne({ _id: id });
+            await fs.unlink(path.join(`public/${bank.imageUrl}`));
+            const payload = {
+                bankName: body.bankName,
+                nomorRekening: body.nomorRekening,
+                name: body.name,
+                imageUrl: `images/${req.file.filename}`
+            }
+            console.log(payload)
+            await Bank.updateOne({ _id: id }, payload)
         }
-        await Bank.updateOne({ _id: id }, payload)
         req.flash('alertMessage', 'Success Update Bank');
         req.flash('alertStatus', 'success');
         res.redirect('/admin/bank')
@@ -153,7 +168,9 @@ const DeleteBank = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const bank = await Bank.deleteOne({ _id: id });
+        const bank = await Bank.findOne({ _id: id });
+        await fs.unlink(path.join(`public/${bank.imageUrl}`));
+        await Bank.deleteOne({ _id: id });
         req.flash('alertMessage', 'Success Delete Category');
         req.flash('alertStatus', 'success');
         res.redirect('/admin/bank')

@@ -19,7 +19,7 @@ admin.get('/item', adminController.viewItem);
 //bank
 admin.get('/bank', adminController.viewBank);
 admin.post('/bank', upload, adminController.AddBank);
-admin.put('/bank', adminController.UpdateBank);
+admin.put('/bank', upload, adminController.UpdateBank);
 admin.delete('/bank/:id', adminController.DeleteBank);
 
 //booking
