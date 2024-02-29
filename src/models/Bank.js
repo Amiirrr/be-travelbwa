@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const BankSchema = mongoose.Schema({
-    BankName: {
+    bankName: {
         type: String,
         required: true
     },
@@ -12,7 +12,13 @@ const BankSchema = mongoose.Schema({
     name: {
         type: String,
         required: true
+    },
+    imageUrl: {
+        type: String,
+        // required: true
     }
 })
 
-module.exports = mongoose.model('Bank', BankSchema)
+const Bank = mongoose.model('Bank', BankSchema)
+
+export default Bank;

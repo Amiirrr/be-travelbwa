@@ -17,7 +17,7 @@ const __dirname = path.resolve();
 // Middleware untuk konten statis dan view engine
 app.set('views', path.join(__dirname, 'src', 'views'));
 app.set('view engine', 'ejs');
-app.use('/public', express.static(path.join(__dirname, '/public')))
+app.use(express.static(path.join(__dirname, '/public')))
 app.use('/sb-admin-2', express.static(path.join(__dirname, 'node_modules/startbootstrap-sb-admin-2')));
 
 // Middleware session dan flash

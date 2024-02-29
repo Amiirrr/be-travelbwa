@@ -1,10 +1,14 @@
 import Category from '../models/category.js'
+import Bank from '../models/Bank.js'
 
+// Dashboard
 const viewDashboard = (req, res) => {
     res.render('admin/dashboard/view_dashboard', {
         title: "Staycation | Dashboard"
     });
 }
+
+// Category
 const viewCategory = async (req, res) => {
     try {
         const category = await Category.find();
@@ -20,8 +24,8 @@ const viewCategory = async (req, res) => {
     } catch (error) {
         res.redirect('/admin/category')
     }
-    // console.log(category)
 }
+
 const AddCategory = async (req, res) => {
     const body = req.body;
 
@@ -64,9 +68,9 @@ const UpdateCategory = async (req, res) => {
 };
 
 const DeleteCategory = async (req, res) => {
+    const { id } = req.params;
 
     try {
-        const { id } = req.params;
         const category = await Category.deleteOne({ _id: id });
         req.flash('alertMessage', 'Success Delete Category');
         req.flash('alertStatus', 'success');
@@ -78,17 +82,89 @@ const DeleteCategory = async (req, res) => {
     }
 }
 
-
+// Item
 const viewItem = (req, res) => {
     res.render('admin/item/view_item', {
         title: "Staycation | Item"
     });
 }
-const viewBank = (req, res) => {
-    res.render('admin/bank/view_bank', {
-        title: "Staycation | Bank"
-    });
+
+// Bank
+const viewBank = async (req, res) => {
+    try {
+        const bank = await Bank.find();
+        const alertMessage = req.flash('alertMessage');
+        const alertStatus = req.flash('alertStatus');
+        const alert = { message: alertMessage, status: alertStatus }
+        res.render('admin/bank/view_bank', {
+            bank,
+            alert,
+            title: "Staycation | Bank"
+        });
+    } catch (error) {
+        res.redirect('/admin/bank')
+    }
 }
+const AddBank = async (req, res) => {
+    const body = req.body;
+
+    try {
+        const payload = {
+            bankName: body.bankName,
+            nomorRekening: body.nomorRekening,
+            name: body.name,
+            imageUrl: `images/${req.file.filename}`,
+        }
+        console.log(payload)
+        await Bank.create(payload);
+        req.flash('alertMessage', 'Success Add Bank');
+        req.flash('alertStatus', 'success');
+        res.redirect('/admin/bank');
+    } catch (error) {
+        req.flash('alertMessage', `${error.message}`);
+        req.flash('alertStatus', 'danger');
+        res.redirect('/admin/bank');
+    }
+}
+const UpdateBank = async (req, res) => {
+    const body = req.body;
+    const id = body.id;
+
+    try {
+        const payload = {
+            BankName: body.BankName,
+            nomorRekening: body.nomorRekening,
+            name: body.name,
+            imageUrl: body.imageUrl,
+        }
+        await Bank.updateOne({ _id: id }, payload)
+        req.flash('alertMessage', 'Success Update Bank');
+        req.flash('alertStatus', 'success');
+        res.redirect('/admin/bank')
+
+    } catch (error) {
+        req.flash('alertMessage', `${error.message}`);
+        req.flash('alertStatus', 'danger');
+        res.redirect('/admin/bank')
+    }
+};
+
+const DeleteBank = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const bank = await Bank.deleteOne({ _id: id });
+        req.flash('alertMessage', 'Success Delete Category');
+        req.flash('alertStatus', 'success');
+        res.redirect('/admin/bank')
+    } catch (error) {
+        req.flash('alertMessage', `${error.message}`);
+        req.flash('alertStatus', 'danger');
+        res.redirect('/admin/bank')
+    }
+}
+
+//Booking
 const viewBooking = (req, res) => {
     res.render('admin/booking/view_booking', {
         title: "Staycation | Booking"
@@ -97,12 +173,19 @@ const viewBooking = (req, res) => {
 
 const adminController = {
     viewDashboard,
+
     viewCategory,
     AddCategory,
     UpdateCategory,
     DeleteCategory,
+
     viewItem,
+
     viewBank,
+    AddBank,
+    UpdateBank,
+    DeleteBank,
+
     viewBooking
 }
 
