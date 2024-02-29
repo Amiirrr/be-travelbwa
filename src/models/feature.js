@@ -15,4 +15,6 @@ const featureSchema = mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('Feature', featureSchema)
+const Feature = mongoose.model('Feature', featureSchema)
+
+export default Feature;

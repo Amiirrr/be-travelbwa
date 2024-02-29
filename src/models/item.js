@@ -40,4 +40,6 @@ const itemSchema = mongoose.Schema({
 
 })
 
-module.exports = mongoose.model('Items', itemSchema)
+const Items = mongoose.model('Items', itemSchema)
+
+export default Items;
