@@ -1,6 +1,6 @@
 import express from "express";
 import adminController from "../controller/adminController.js";
-import { upload } from '../middleware/multer.js'
+import { upload, uploadMultiple } from '../middleware/multer.js'
 
 const admin = express.Router();
 
@@ -15,6 +15,7 @@ admin.delete('/category/:id', adminController.DeleteCategory);
 
 //item
 admin.get('/item', adminController.viewItem);
+admin.post('/item', uploadMultiple, adminController.AddItem);
 
 //bank
 admin.get('/bank', adminController.viewBank);

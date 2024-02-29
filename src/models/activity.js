@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+const { ObjectId } = mongoose.Schema;
+
 const activitySchema = mongoose.Schema({
     name: {
         type: String,
@@ -16,6 +18,10 @@ const activitySchema = mongoose.Schema({
     imageUrl: {
         type: String,
         required: true
+    },
+    itemId: {
+        type: ObjectId,
+        ref: 'item'
     }
 })
 

@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+const { ObjectId } = mongoose.Schema;
+
 const featureSchema = mongoose.Schema({
     name: {
         type: String,
@@ -12,6 +14,10 @@ const featureSchema = mongoose.Schema({
     imageUrl: {
         type: String,
         required: true
+    },
+    itemId: {
+        type: ObjectId,
+        ref: 'item'
     }
 })
 

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+const { ObjectId } = mongoose.Schema;
 
 const itemSchema = mongoose.Schema({
     title: {
@@ -18,13 +19,18 @@ const itemSchema = mongoose.Schema({
         required: true
     },
     isPopular: {
-        type: Boolean
+        type: Boolean,
+        default: false
     },
     description: {
-        type: string,
+        type: String,
         required: true
     },
-    imageID: [{
+    categoryId: [{
+        type: ObjectId,
+        ref: 'Category'
+    }],
+    imageId: [{
         type: ObjectId,
         ref: 'Image'
     }],
@@ -36,10 +42,8 @@ const itemSchema = mongoose.Schema({
         type: ObjectId,
         ref: 'Activity'
     }]
-
-
 })
 
-const Items = mongoose.model('Items', itemSchema)
+const Item = mongoose.model('Item', itemSchema)
 
-export default Items;
+export default Item;

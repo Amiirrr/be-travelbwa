@@ -1,7 +1,10 @@
 import Category from '../models/category.js'
 import Bank from '../models/Bank.js'
+import Item from '../models/item.js'
+import Image from '../models/image.js'
 import fs from 'fs-extra'
 import path from 'path'
+import { create } from 'domain'
 
 // Dashboard
 const viewDashboard = (req, res) => {
@@ -85,10 +88,55 @@ const DeleteCategory = async (req, res) => {
 }
 
 // Item
-const viewItem = (req, res) => {
-    res.render('admin/item/view_item', {
-        title: "Staycation | Item"
-    });
+const viewItem = async (req, res) => {
+    try {
+        const category = await Category.find();
+        const alertMessage = req.flash('alertMessage');
+        const alertStatus = req.flash('alertStatus');
+        const alert = { message: alertMessage, status: alertStatus }
+        res.render('admin/item/view_item', {
+            title: "Staycation | Item",
+            category,
+            alert
+        });
+    } catch (error) {
+        req.flash('alertMessage', `${error.message}`);
+        req.flash('alertStatus', 'danger');
+        res.redirect('/admin/item');
+    }
+}
+
+const AddItem = async (req, res) => {
+
+    try {
+        const { categoryId, title, price, city, about, country } = req.body;
+        if (req.files.length > 0) {
+            const category = await Category.findOne({ _id: categoryId });
+            const newItem = {
+                categoryId,
+                title,
+                country,
+                description: about,
+                price,
+                city
+            }
+            const item = await Item.create(newItem);
+            category.itemId.push({ _id: item._id });
+            await category.save();
+            for (let i = 0; i < req.files.length; i++) {
+                const imageSave = await Image.create({ imageUrl: `images/${req.files[i].filename}` });
+                item.imageId.push({ _id: imageSave._id });
+                await item.save();
+            }
+            req.flash('alertMessage', 'Success Add Item');
+            req.flash('alertStatus', 'success');
+            res.redirect('/admin/item');
+        }
+    } catch (error) {
+        req.flash('alertMessage', `${error.message}`);
+        req.flash('alertStatus', 'danger');
+        res.redirect('/admin/item');
+    }
 }
 
 // Bank
@@ -128,6 +176,7 @@ const AddBank = async (req, res) => {
         res.redirect('/admin/bank');
     }
 }
+
 const UpdateBank = async (req, res) => {
     const body = req.body;
     const id = body.id;
@@ -197,6 +246,7 @@ const adminController = {
     DeleteCategory,
 
     viewItem,
+    AddItem,
 
     viewBank,
     AddBank,
