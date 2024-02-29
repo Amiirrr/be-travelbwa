@@ -6,40 +6,48 @@ import cors from 'cors'
 import router from './src/routes/index.js';
 import connectDB from './src/config/db.js';
 import methodOverride from 'method-override';
+import session from 'express-session';
+import flash from 'connect-flash'
 
 const app = express();
 const port = 3000;
 
 const __dirname = path.resolve();
 
-app.use(methodOverride('_method'))
+// Middleware untuk konten statis dan view engine
+app.set('views', path.join(__dirname, 'src', 'views'));
+app.set('view engine', 'ejs');
+app.use('/public', express.static(path.join(__dirname, '/public')))
+app.use('/sb-admin-2', express.static(path.join(__dirname, 'node_modules/startbootstrap-sb-admin-2')));
 
+// Middleware session dan flash
 app.use(cookieParser()); //allow to access cookie
 app.use(bodyParser.urlencoded({ extended: false })) //allow request with format x-www-form-urlencoded
 app.use(bodyParser.json()) //allow request with format json
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 60000 }
+}))
+app.use(flash());
+
+// Middleware untuk mengatur router
+app.use(methodOverride('_method'))
 app.use(router);
-//enable cors 
+
+// Middleware untuk CORS
 app.use(cors({
     credentials: true,
     origin: ['http://localhost:5173', 'http://localhost:3000']
 }))
 
-app.listen(port, () => {
-    console.log(`server is running on port ${port}`)
-})
-
-
-app.set('views', path.join(__dirname, 'src', 'views'));
-app.set('view engine', 'ejs');
-//middleware
-app.use('/public', express.static(path.join(__dirname, '/public')))
-app.use('/sb-admin-2', express.static(path.join(__dirname, 'node_modules/startbootstrap-sb-admin-2')));
-
 // Penanganan rute untuk rute '/'
 app.get('/', (req, res) => {
     res.render('index');
 });
-// error handler
+
+// Error handler
 app.use(function (err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
@@ -50,8 +58,14 @@ app.use(function (err, req, res, next) {
     res.render('error');
 });
 
-//connect database
-connectDB('mongodb://127.0.0.1/db-travelbwa')
+// Menghubungkan ke database
+connectDB('mongodb://127.0.0.1/db-travelbwa');
+
+// Mulai server
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+});
+
 
 
 // app.use('/admin', admin);
