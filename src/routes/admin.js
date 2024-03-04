@@ -16,6 +16,10 @@ admin.delete('/category/:id', adminController.DeleteCategory);
 //item
 admin.get('/item', adminController.viewItem);
 admin.post('/item', uploadMultiple, adminController.AddItem);
+admin.get('/item/show-image/:id', adminController.ShowImageItem);
+admin.get('/item/:id', adminController.ShowEditItem);
+admin.put('/item/:id', uploadMultiple, adminController.EditItem);
+admin.delete('/item/:id', adminController.DeleteItem);
 
 //bank
 admin.get('/bank', adminController.viewBank);
