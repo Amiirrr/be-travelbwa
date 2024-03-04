@@ -21,6 +21,10 @@ admin.get('/item/:id', adminController.ShowEditItem);
 admin.put('/item/:id', uploadMultiple, adminController.EditItem);
 admin.delete('/item/:id', adminController.DeleteItem);
 
+//endpoint feature 
+admin.get('/item/show-detail-item/:itemId', adminController.ViewDetailItem);
+admin.post('/item/add/feature', upload, adminController.AddFeature);
+
 //bank
 admin.get('/bank', adminController.viewBank);
 admin.post('/bank', upload, adminController.AddBank);

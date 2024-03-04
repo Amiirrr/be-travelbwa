@@ -5,6 +5,7 @@ import Image from '../models/image.js'
 import fs from 'fs-extra'
 import path from 'path'
 import { create } from 'domain'
+import Feature from '../models/feature.js'
 
 // Dashboard
 const viewDashboard = (req, res) => {
@@ -271,6 +272,56 @@ const DeleteItem = async (req, res) => {
     }
 }
 
+const ViewDetailItem = async (req, res) => {
+    const { itemId } = req.params;
+    try {
+        const alertMessage = req.flash('alertMessage');
+        const alertStatus = req.flash('alertStatus');
+        const alert = { message: alertMessage, status: alertStatus }
+        res.render('admin/item/detail_item/view_detail_item', {
+            title: "Staycation | Detail Item",
+            alert,
+            itemId
+        })
+
+    } catch (error) {
+        req.flash('alertMessage', `${error.message}`);
+        req.flash('alertStatus', 'danger');
+        res.redirect(`/admin/item/show-detail-item/${itemId}`);
+    }
+}
+const AddFeature = async (req, res) => {
+    const { name, qty, itemId } = req.body;
+
+    try {
+        if (!req.file) {
+            req.flash('alertMessage', 'Tidak ada file');
+            req.flash('alertStatus', 'danger');
+            res.redirect(`/admin/item/show-detail-item/${itemId}`);
+        }
+        const payload = {
+            name,
+            qty,
+            itemId,
+            imageUrl: `images/${req.file.filename}`,
+        }
+        const feature = await Feature.create(payload);
+
+        const item = await Item.findOne({ _id: itemId });
+
+        item.featureId.push({ _id: feature._id });
+        await item.save();
+
+        req.flash('alertMessage', 'Success Add Feature');
+        req.flash('alertStatus', 'success');
+        res.redirect(`/admin/item/show-detail-item/${itemId}`);
+    } catch (error) {
+        req.flash('alertMessage', `${error.message}`);
+        req.flash('alertStatus', 'danger');
+        res.redirect(`/admin/item/show-detail-item/${itemId}`);
+    }
+}
+
 
 // Bank
 const viewBank = async (req, res) => {
@@ -384,6 +435,9 @@ const adminController = {
     ShowEditItem,
     EditItem,
     DeleteItem,
+    ViewDetailItem,
+
+    AddFeature,
 
     viewBank,
     AddBank,
