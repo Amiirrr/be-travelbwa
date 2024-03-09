@@ -24,6 +24,8 @@ admin.delete('/item/:id', adminController.DeleteItem);
 //endpoint feature 
 admin.get('/item/show-detail-item/:itemId', adminController.ViewDetailItem);
 admin.post('/item/add/feature', upload, adminController.AddFeature);
+admin.put('/item/update/feature', upload, adminController.UpdateFeature);
+admin.delete('/item/:itemId/feature/:id/', adminController.DeleteFeature);
 
 //bank
 admin.get('/bank', adminController.viewBank);

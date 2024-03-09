@@ -184,7 +184,7 @@ const ShowEditItem = async (req, res) => {
     try {
         const { id } = req.params;
         const item = await Item.findOne({ _id: id })
-            .populate({ path: 'categoryId', select: 'id name' })
+            .populate({ path: 'categoryId', select: 'name' })
             .populate({ path: 'imageId', select: 'id imageUrl' });
         const category = await Category.find();
         console.log(item)
@@ -219,7 +219,10 @@ const EditItem = async (req, res) => {
             city
         };
 
-        const item = await Item.findOne({ _id: id }).populate({ path: 'imageId', select: '_id' });
+        const item = await Item.findOne({ _id: id })
+            .populate({ path: 'imageId', select: '_id imageUrl' });
+        // const item = await Item.findOne({ _id: id }).populate('imageId'); // Corrected the populate call
+        console.log(item)
 
         if (req.files.length > 0) {
             // Hapus semua gambar yang terkait dengan item
@@ -278,10 +281,12 @@ const ViewDetailItem = async (req, res) => {
         const alertMessage = req.flash('alertMessage');
         const alertStatus = req.flash('alertStatus');
         const alert = { message: alertMessage, status: alertStatus }
+        const feature = await Feature.find({ itemId: itemId })
         res.render('admin/item/detail_item/view_detail_item', {
             title: "Staycation | Detail Item",
             alert,
-            itemId
+            itemId,
+            feature
         })
 
     } catch (error) {
@@ -292,7 +297,7 @@ const ViewDetailItem = async (req, res) => {
 }
 const AddFeature = async (req, res) => {
     const { name, qty, itemId } = req.body;
-
+    console.log(itemId)
     try {
         if (!req.file) {
             req.flash('alertMessage', 'Tidak ada file');
@@ -322,6 +327,57 @@ const AddFeature = async (req, res) => {
     }
 }
 
+const UpdateFeature = async (req, res) => {
+    const { id, name, qty, itemId } = req.body;
+    try {
+        const feature = await Feature.findOne({ _id: id });
+        const imageUrl = req.file ? `images/${req.file.filename}` : feature.imageUrl;
+
+        const payload = {
+            name,
+            qty,
+            imageUrl
+        }
+        if (fs.existsSync(path.join('public', feature.imageUrl)) && req.file) {
+            await fs.unlink(path.join('public', feature.imageUrl));
+        }
+
+        await Feature.updateOne({ _id: id }, payload)
+
+        req.flash('alertMessage', 'Success Update Feature');
+        req.flash('alertStatus', 'success');
+        res.redirect(`/admin/item/show-detail-item/${itemId}`);
+
+    } catch (error) {
+        req.flash('alertMessage', `${error.message}`);
+        req.flash('alertStatus', 'danger');
+        res.redirect(`/admin/item/show-detail-item/${itemId}`);
+    }
+};
+const DeleteFeature = async (req, res) => {
+    const { id, itemId } = req.params;
+
+    try {
+        const feature = await Feature.findOne({ _id: id });
+        const item = await Item.findOne({ _id: itemId });
+
+        for (let i = 0; i < item.featureId.length; i++) {
+            if (item.featureId[i]._id.toString() === feature._id.toString()) {
+                item.featureId.pull({ _id: feature._id });
+                await item.save();
+            }
+        }
+        await fs.unlink(path.join(`public/${feature.imageUrl}`));
+        await Feature.deleteOne({ _id: id });
+        req.flash('alertMessage', 'Success Delete Feature');
+        req.flash('alertStatus', 'success');
+        res.redirect(`/admin/item/show-detail-item/${itemId}`);
+    } catch (error) {
+        req.flash('alertMessage', `${error.message}`);
+        req.flash('alertStatus', 'danger');
+        res.redirect(`/admin/item/show-detail-item/${itemId}`);
+    }
+}
 
 // Bank
 const viewBank = async (req, res) => {
@@ -438,6 +494,8 @@ const adminController = {
     ViewDetailItem,
 
     AddFeature,
+    UpdateFeature,
+    DeleteFeature,
 
     viewBank,
     AddBank,
