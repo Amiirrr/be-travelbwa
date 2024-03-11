@@ -89,20 +89,31 @@
         </div>
         <%- include('../../../partials/js.ejs')%>
             <%- include('./show_modal_feature.ejs')%>
+                <%- include('./show_modal_activity.ejs')%>
 
-                <script>
-                    $(document).ready(function () {
-                        $('#dataTableActivity').dataTable();
-                    })
-                    CKEDITOR.replace('about');
+                    <script>
+                        $(document).ready(function () {
+                            $('#dataTableActivity').DataTable();
+                        })
+                        CKEDITOR.replace('about');
 
-                    $('#dataTable').on('click', '.button-update', function () {
-                        let id = $(this).data('id');
-                        let name = $(this).data('name');
-                        let qty = $(this).data('qty');
-                        $('#edit-modal').modal('show');
-                        $('.id').val(id)
-                        $('.name').val(name)
-                        $('.qty').val(qty)
-                    })
-                </script>
+                        $('#dataTableActivity').on('click', '.button-update', function () {
+                            let id = $(this).data('id');
+                            let name = $(this).data('name');
+                            let type = $(this).data('type');
+                            $('.edit-modal-activity').modal('show');
+                            $('.id').val(id);
+                            $('.name').val(name);
+                            $('.type').val(type);
+                        })
+
+                        $('#dataTable').on('click', '.button-update', function () {
+                            let id = $(this).data('id');
+                            let name = $(this).data('name');
+                            let qty = $(this).data('qty');
+                            $('.edit-modal-feature').modal('show');
+                            $('.id').val(id);
+                            $('.name').val(name);
+                            $('.qty').val(qty);
+                        })
+                    </script>

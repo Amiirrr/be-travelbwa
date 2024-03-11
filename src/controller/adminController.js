@@ -6,6 +6,8 @@ import fs from 'fs-extra'
 import path from 'path'
 import { create } from 'domain'
 import Feature from '../models/feature.js'
+import Activity from '../models/activity.js'
+import { features } from 'process'
 
 // Dashboard
 const viewDashboard = (req, res) => {
@@ -120,6 +122,7 @@ const AddItem = async (req, res) => {
         if (req.files.length === 0) {
             throw new Error('No files uploaded');
         }
+        console.log(categoryId)
 
         const category = await Category.findOne({ _id: categoryId });
         if (!category) {
@@ -263,6 +266,13 @@ const DeleteItem = async (req, res) => {
                 await fs.unlink(path.join(`public/${imageUpdate.imageUrl}`));
             }
         }
+        //delete item dicategory
+        const category = await Category.findOne({ _id: item.categoryId._id });
+        category.itemId.pull({ _id: item._id });
+        await category.save();
+
+        await Feature.deleteMany({ itemId: item._id });
+        await Activity.deleteMany({ itemId: item._id });
 
         await Item.deleteOne({ _id: id });
         req.flash('alertMessage', 'Success Delete Item');
@@ -281,12 +291,14 @@ const ViewDetailItem = async (req, res) => {
         const alertMessage = req.flash('alertMessage');
         const alertStatus = req.flash('alertStatus');
         const alert = { message: alertMessage, status: alertStatus }
-        const feature = await Feature.find({ itemId: itemId })
+        const feature = await Feature.find({ itemId: itemId });
+        const activity = await Activity.find({ itemId: itemId })
         res.render('admin/item/detail_item/view_detail_item', {
             title: "Staycation | Detail Item",
             alert,
             itemId,
-            feature
+            feature,
+            activity
         })
 
     } catch (error) {
@@ -370,6 +382,92 @@ const DeleteFeature = async (req, res) => {
         await fs.unlink(path.join(`public/${feature.imageUrl}`));
         await Feature.deleteOne({ _id: id });
         req.flash('alertMessage', 'Success Delete Feature');
+        req.flash('alertStatus', 'success');
+        res.redirect(`/admin/item/show-detail-item/${itemId}`);
+    } catch (error) {
+        req.flash('alertMessage', `${error.message}`);
+        req.flash('alertStatus', 'danger');
+        res.redirect(`/admin/item/show-detail-item/${itemId}`);
+    }
+}
+
+// endpoint Activity
+const AddActivity = async (req, res) => {
+    const { name, type, itemId } = req.body;
+    console.log(itemId)
+    try {
+        if (!req.file) {
+            req.flash('alertMessage', 'Tidak ada file');
+            req.flash('alertStatus', 'danger');
+            res.redirect(`/admin/item/show-detail-item/${itemId}`);
+        }
+        const payload = {
+            name,
+            type,
+            itemId,
+            imageUrl: `images/${req.file.filename}`,
+        }
+        const activity = await Activity.create(payload);
+
+        const item = await Item.findOne({ _id: itemId });
+
+        item.activityId.push({ _id: activity._id });
+        await item.save();
+
+        req.flash('alertMessage', 'Success Add Activity');
+        req.flash('alertStatus', 'success');
+        res.redirect(`/admin/item/show-detail-item/${itemId}`);
+    } catch (error) {
+        req.flash('alertMessage', `${error.message}`);
+        req.flash('alertStatus', 'danger');
+        res.redirect(`/admin/item/show-detail-item/${itemId}`);
+    }
+}
+
+const UpdateActivity = async (req, res) => {
+    const { id, name, type, itemId } = req.body;
+    try {
+        const activity = await Activity.findOne({ _id: id });
+        const imageUrl = req.file ? `images/${req.file.filename}` : activity.imageUrl;
+
+        const payload = {
+            name,
+            type,
+            imageUrl
+        }
+        if (fs.existsSync(path.join('public', activity.imageUrl)) && req.file) {
+            await fs.unlink(path.join('public', activity.imageUrl));
+        }
+
+        await Activity.updateOne({ _id: id }, payload)
+
+        req.flash('alertMessage', 'Success Update Activity');
+        req.flash('alertStatus', 'success');
+        res.redirect(`/admin/item/show-detail-item/${itemId}`);
+
+    } catch (error) {
+        req.flash('alertMessage', `${error.message}`);
+        req.flash('alertStatus', 'danger');
+        res.redirect(`/admin/item/show-detail-item/${itemId}`);
+    }
+};
+const DeleteActivity = async (req, res) => {
+    const { id, itemId } = req.params;
+
+    try {
+        const activity = await Activity.findOne({ _id: id });
+        const item = await Item.findOne({ _id: itemId });
+
+        for (let i = 0; i < item.activityId.length; i++) {
+            if (item.activityId[i]._id.toString() === activity._id.toString()) {
+                item.activityId.pull({ _id: activity._id });
+                await item.save();
+            }
+        }
+        await fs.unlink(path.join(`public/${activity.imageUrl}`));
+        await Activity.deleteOne({ _id: id });
+
+        req.flash('alertMessage', 'Success Delete Activity');
         req.flash('alertStatus', 'success');
         res.redirect(`/admin/item/show-detail-item/${itemId}`);
     } catch (error) {
@@ -496,6 +594,10 @@ const adminController = {
     AddFeature,
     UpdateFeature,
     DeleteFeature,
+
+    AddActivity,
+    UpdateActivity,
+    DeleteActivity,
 
     viewBank,
     AddBank,
