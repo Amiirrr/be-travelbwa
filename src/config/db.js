@@ -12,3 +12,4 @@ async function connectDB(MANGO_URL) {
 };
 
 export default connectDB;
+

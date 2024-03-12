@@ -4,6 +4,10 @@ import { upload, uploadMultiple } from '../middleware/multer.js'
 
 const admin = express.Router();
 
+//Login
+admin.get('/signin', adminController.viewSignIn);
+admin.post('/signin', adminController.ActionSignIn);
+
 //dashboard
 admin.get('/dashboard', adminController.viewDashboard);
 

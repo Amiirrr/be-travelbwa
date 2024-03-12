@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+const { ObjectId } = mongoose.Schema;
+
 const bookingSchema = mongoose.Schema({
     title: {
         type: String,
@@ -13,44 +15,58 @@ const bookingSchema = mongoose.Schema({
         type: Date,
         required: true
     },
-    proofPayment: {
+    invoice: {
         type: String,
         required: true
     },
-    bankFrom: {
-        type: String,
-        required: true
-    },
-    accountHolder: {
-        type: Boolean,
-        required: true
-    },
-    itemID: [{
+    itemId: {
         _id: {
             type: ObjectId,
             ref: 'Item',
+            required: true
+        },
+        title: {
+            type: String,
             required: true
         },
         price: {
             type: Number,
             required: true
         },
-        night: {
+        duration: {
             type: Number,
             required: true
         },
-    }],
-    memberId: [{
+    },
+    total: {
+        type: Number,
+        required: true
+    },
+    memberId: {
         type: ObjectId,
         ref: 'Member'
-    }],
-    bankId: [{
+    },
+    bankId: {
         type: ObjectId,
         ref: 'Bank'
-    }],
-    status: {
-        type: String,
-        required: true
+    },
+    payments: {
+        proofPayment: {
+            type: String,
+            required: true
+        },
+        bankFrom: {
+            type: String,
+            required: true
+        },
+        accountHolder: {
+            type: Boolean,
+            required: true
+        },
+        status: {
+            type: String,
+            required: true
+        },
     },
 })
 

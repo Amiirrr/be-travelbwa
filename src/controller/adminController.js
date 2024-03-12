@@ -4,17 +4,58 @@ import Item from '../models/item.js'
 import Image from '../models/image.js'
 import fs from 'fs-extra'
 import path from 'path'
-import { create } from 'domain'
 import Feature from '../models/feature.js'
 import Activity from '../models/activity.js'
-import { features } from 'process'
+import User from '../models/user.js'
+import bcrypt from 'bcryptjs'
 
 // Dashboard
+const viewSignIn = (req, res) => {
+    try {
+        const alertMessage = req.flash('alertMessage');
+        const alertStatus = req.flash('alertStatus');
+        const alert = { message: alertMessage, status: alertStatus }
+        res.render('index', {
+            title: "Staycation | Login",
+            alert
+        });
+    } catch (error) {
+        res.redirect('/admin/signin')
+    }
+}
+// Dashboard
+const ActionSignIn = async (req, res) => {
+    try {
+        const { username, password } = req.body
+
+        const user = await User.findOne({ username: username })
+        if (!user) {
+            req.flash('alertMessage', 'Username Salah');
+            req.flash('alertStatus', 'danger');
+            return res.redirect('/admin/signin')
+        }
+
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
+        if (!isPasswordMatch) {
+            req.flash('alertMessage', 'Password Salah');
+            req.flash('alertStatus', 'danger');
+            return res.redirect('/admin/signin')
+        }
+
+        res.redirect('/admin/dashboard')
+
+    } catch (error) {
+        res.redirect('/admin/signin')
+    }
+}
+
 const viewDashboard = (req, res) => {
     res.render('admin/dashboard/view_dashboard', {
         title: "Staycation | Dashboard"
     });
 }
+
+
 
 // Category
 const viewCategory = async (req, res) => {
@@ -41,6 +82,13 @@ const AddCategory = async (req, res) => {
         const payload = {
             name: body.name
         }
+
+        const createUser = {
+            username: "amir",
+            password: "123456"
+        }
+        await User.create(createUser);
+
         console.log(payload)
         await Category.create(payload);
         req.flash('alertMessage', 'Success Add Category');
@@ -576,6 +624,9 @@ const viewBooking = (req, res) => {
 }
 
 const adminController = {
+    viewSignIn,
+    ActionSignIn,
+
     viewDashboard,
 
     viewCategory,
