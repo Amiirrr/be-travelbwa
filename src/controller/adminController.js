@@ -15,10 +15,15 @@ const viewSignIn = (req, res) => {
         const alertMessage = req.flash('alertMessage');
         const alertStatus = req.flash('alertStatus');
         const alert = { message: alertMessage, status: alertStatus }
-        res.render('index', {
-            title: "Staycation | Login",
-            alert
-        });
+
+        if (req.session.user === null || req.session.user === undefined) {
+            res.render('index', {
+                title: "Staycation | Login",
+                alert
+            });
+        } else {
+            res.redirect('/admin/dashboard')
+        }
     } catch (error) {
         res.redirect('/admin/signin')
     }
@@ -42,6 +47,11 @@ const ActionSignIn = async (req, res) => {
             return res.redirect('/admin/signin')
         }
 
+        req.session.user = {
+            id: user._id,
+            username: user.username
+        }
+
         res.redirect('/admin/dashboard')
 
     } catch (error) {
@@ -49,13 +59,26 @@ const ActionSignIn = async (req, res) => {
     }
 }
 
-const viewDashboard = (req, res) => {
-    res.render('admin/dashboard/view_dashboard', {
-        title: "Staycation | Dashboard"
-    });
+const ActionLogout = async (req, res) => {
+    try {
+        req.session.destroy();
+        res.redirect('/admin/singin')
+
+    } catch (error) {
+        res.redirect('/admin/dashboard')
+    }
 }
 
+const viewDashboard = (req, res) => {
+    try {
+        res.render('admin/dashboard/view_dashboard', {
+            title: "Staycation | Dashboard",
+            user: req.session.user
+        });
+    } catch (error) {
 
+    }
+}
 
 // Category
 const viewCategory = async (req, res) => {
@@ -67,7 +90,8 @@ const viewCategory = async (req, res) => {
         res.render('admin/category/view_category', {
             category,
             alert,
-            title: "Staycation | Category"
+            title: "Staycation | Category",
+            user: req.session.user
         });
 
     } catch (error) {
@@ -154,7 +178,8 @@ const viewItem = async (req, res) => {
             category,
             alert,
             item,
-            action: 'view'
+            action: 'view',
+            user: req.session.user
         });
     } catch (error) {
         req.flash('alertMessage', `${error.message}`);
@@ -222,7 +247,8 @@ const ShowImageItem = async (req, res) => {
             title: "Staycation | Image Item",
             alert,
             item,
-            action: 'show image'
+            action: 'show image',
+            user: req.session.user
         });
 
     } catch (error) {
@@ -248,7 +274,8 @@ const ShowEditItem = async (req, res) => {
             alert,
             category,
             item,
-            action: 'edit'
+            action: 'edit',
+            user: req.session.user
         });
 
     } catch (error) {
@@ -346,7 +373,8 @@ const ViewDetailItem = async (req, res) => {
             alert,
             itemId,
             feature,
-            activity
+            activity,
+            user: req.session.user
         })
 
     } catch (error) {
@@ -535,7 +563,8 @@ const viewBank = async (req, res) => {
         res.render('admin/bank/view_bank', {
             bank,
             alert,
-            title: "Staycation | Bank"
+            title: "Staycation | Bank",
+            user: req.session.user
         });
     } catch (error) {
         res.redirect('/admin/bank')
@@ -619,13 +648,15 @@ const DeleteBank = async (req, res) => {
 //Booking
 const viewBooking = (req, res) => {
     res.render('admin/booking/view_booking', {
-        title: "Staycation | Booking"
+        title: "Staycation | Booking",
+        user: req.session.user
     });
 }
 
 const adminController = {
     viewSignIn,
     ActionSignIn,
+    ActionLogout,
 
     viewDashboard,
 

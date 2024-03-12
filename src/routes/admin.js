@@ -1,12 +1,15 @@
 import express from "express";
 import adminController from "../controller/adminController.js";
 import { upload, uploadMultiple } from '../middleware/multer.js'
+import auth from '../middleware/auth.js'
 
 const admin = express.Router();
 
 //Login
 admin.get('/signin', adminController.viewSignIn);
 admin.post('/signin', adminController.ActionSignIn);
+admin.get('/logout', adminController.ActionLogout);
+admin.use(auth);
 
 //dashboard
 admin.get('/dashboard', adminController.viewDashboard);
