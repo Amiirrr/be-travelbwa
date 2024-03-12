@@ -1,5 +1,6 @@
 import Category from '../models/category.js'
 import Bank from '../models/Bank.js'
+import Booking from '../models/booking.js'
 import Item from '../models/item.js'
 import Image from '../models/image.js'
 import fs from 'fs-extra'
@@ -8,6 +9,7 @@ import Feature from '../models/feature.js'
 import Activity from '../models/activity.js'
 import User from '../models/user.js'
 import bcrypt from 'bcryptjs'
+import Member from '../models/member.js'
 
 // Dashboard
 const viewSignIn = (req, res) => {
@@ -73,7 +75,8 @@ const viewDashboard = (req, res) => {
     try {
         res.render('admin/dashboard/view_dashboard', {
             title: "Staycation | Dashboard",
-            user: req.session.user
+            user: req.session.user || { username: "amir" },
+
         });
     } catch (error) {
 
@@ -91,7 +94,7 @@ const viewCategory = async (req, res) => {
             category,
             alert,
             title: "Staycation | Category",
-            user: req.session.user
+            user: req.session.user || { username: "amir" },
         });
 
     } catch (error) {
@@ -106,14 +109,28 @@ const AddCategory = async (req, res) => {
         const payload = {
             name: body.name
         }
-
-        const createUser = {
-            username: "amir",
-            password: "123456"
+        const createBooking = {
+            bookingStartDate: '12-12-2020',
+            bookingEndDate: '12-12-2020',
+            invoice: 1231231,
+            itemId: {
+                _id: '65e5d961f9a0ad74fa69def2',
+                title: 'Village Angga',
+                price: 6,
+                duration: 2,
+            },
+            total: 12,
+            memberId: '65f07fb0ca50d739baa6fbe9',
+            bankId: '65e04b534246adce751eaf43',
+            payments: {
+                proofPayment: 'images/bukti.jpg',
+                bankFrom: 'BNI',
+                status: 'Proses',
+                accountHolder: 'Amir'
+            }
         }
-        await User.create(createUser);
 
-        console.log(payload)
+        await Booking.create(createBooking);
         await Category.create(payload);
         req.flash('alertMessage', 'Success Add Category');
         req.flash('alertStatus', 'success');
@@ -179,7 +196,8 @@ const viewItem = async (req, res) => {
             alert,
             item,
             action: 'view',
-            user: req.session.user
+            user: req.session.user || { username: "amir" },
+
         });
     } catch (error) {
         req.flash('alertMessage', `${error.message}`);
@@ -248,7 +266,8 @@ const ShowImageItem = async (req, res) => {
             alert,
             item,
             action: 'show image',
-            user: req.session.user
+            user: req.session.user || { username: "amir" },
+
         });
 
     } catch (error) {
@@ -275,7 +294,8 @@ const ShowEditItem = async (req, res) => {
             category,
             item,
             action: 'edit',
-            user: req.session.user
+            user: req.session.user || { username: "amir" },
+
         });
 
     } catch (error) {
@@ -374,7 +394,8 @@ const ViewDetailItem = async (req, res) => {
             itemId,
             feature,
             activity,
-            user: req.session.user
+            user: req.session.user || { username: "amir" },
+
         })
 
     } catch (error) {
@@ -564,7 +585,8 @@ const viewBank = async (req, res) => {
             bank,
             alert,
             title: "Staycation | Bank",
-            user: req.session.user
+            user: req.session.user || { username: "amir" },
+
         });
     } catch (error) {
         res.redirect('/admin/bank')
@@ -646,10 +668,15 @@ const DeleteBank = async (req, res) => {
 }
 
 //Booking
-const viewBooking = (req, res) => {
+const viewBooking = async (req, res) => {
+
+    const booking = await Booking.find()
+        .populate('bankId')
+        .populate('memberId');
     res.render('admin/booking/view_booking', {
         title: "Staycation | Booking",
-        user: req.session.user
+        user: req.session.user || { username: "amir" },
+        booking
     });
 }
 

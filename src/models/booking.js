@@ -3,10 +3,6 @@ import mongoose from "mongoose";
 const { ObjectId } = mongoose.Schema;
 
 const bookingSchema = mongoose.Schema({
-    title: {
-        type: String,
-        required: true
-    },
     bookingStartDate: {
         type: Date,
         required: true
@@ -60,7 +56,7 @@ const bookingSchema = mongoose.Schema({
             required: true
         },
         accountHolder: {
-            type: Boolean,
+            type: String,
             required: true
         },
         status: {
