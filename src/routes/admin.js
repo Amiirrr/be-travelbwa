@@ -47,5 +47,8 @@ admin.delete('/bank/:id', adminController.DeleteBank);
 
 //booking
 admin.get('/booking', adminController.viewBooking);
+admin.get('/booking/:id', adminController.ShowDetailBooking);
+admin.put('/booking/:id/confirmation', adminController.BookingConfirmation);
+admin.put('/booking/:id/reject', adminController.BookingRejection);
 
 export default admin
