@@ -9,7 +9,7 @@ const categorySchema = mongoose.Schema({
     },
     itemId: [{
         type: ObjectId,
-        ref: 'item'
+        ref: 'Item'
     }]
 })
 
