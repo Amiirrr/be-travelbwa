@@ -116,36 +116,19 @@ const AddCategory = async (req, res) => {
         const payload = {
             name: body.name
         }
-        const createBooking = {
-            bookingStartDate: '12-12-2020',
-            bookingEndDate: '12-12-2020',
-            invoice: 1231231,
-            itemId: {
-                _id: '65e5d961f9a0ad74fa69def2',
-                title: 'Village Angga',
-                price: 6,
-                duration: 2,
-            },
-            total: 12,
-            memberId: '65f07fb0ca50d739baa6fbe9',
-            bankId: '65e04b534246adce751eaf43',
-            payments: {
-                proofPayment: 'images/bukti.jpg',
-                bankFrom: 'BNI',
-                status: 'Proses',
-                accountHolder: 'Amir'
-            }
-        }
 
-        await Booking.create(createBooking);
-        await Category.create(payload);
+        const category = await Category.create(payload);
         req.flash('alertMessage', 'Success Add Category');
         req.flash('alertStatus', 'success');
-        res.redirect('/admin/category');
+        // res.redirect('/admin/category');
+        res.status(201).json({ message: "Success category", category });
+
     } catch (error) {
         req.flash('alertMessage', `${error.message}`);
         req.flash('alertStatus', 'danger');
-        res.redirect('/admin/category');
+        // res.redirect('/admin/category');
+        res.status(500).json({ message: "Internal server error" });
+
     }
 }
 const UpdateCategory = async (req, res) => {

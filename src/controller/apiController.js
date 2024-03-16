@@ -27,6 +27,7 @@ const landingPage = async (req, res) => {
                     perDocumentLimit: 1
                 }
             })
+
         console.log(category)
 
         const treveler = await Treveler.find();
@@ -63,7 +64,7 @@ const landingPage = async (req, res) => {
             },
             category,
             testimonial,
-            mostPicked,
+            mostPicked
         })
     } catch (error) {
         console.log(error);
@@ -107,9 +108,9 @@ const bookingPage = async (req, res) => {
 
     try {
         const {
-            idItem,
+            image,
+            itemId,
             duration,
-            // price,
             bookingStartDate,
             bookingEndDate,
             firstName,
@@ -118,18 +119,33 @@ const bookingPage = async (req, res) => {
             phoneNumber,
             accountHolder,
             bankFrom,
+            bankTo
         } = req.body;
+
+        console.log(itemId)
+        console.log(req.file)
 
         if (!req.file) {
             return res.status(404).json({ message: "Image not found" });
         }
 
-        console.log(idItem)
+        const data = {
+            itemId,
+            duration,
+            bookingStartDate,
+            bookingEndDate,
+            firstName,
+            lastName,
+            email,
+            phoneNumber,
+            accountHolder,
+            bankFrom,
+            bankTo
+        }
 
         if (
-            idItem === undefined ||
+            itemId === undefined ||
             duration === undefined ||
-            // price === undefined ||
             bookingStartDate === undefined ||
             bookingEndDate === undefined ||
             firstName === undefined ||
@@ -137,11 +153,13 @@ const bookingPage = async (req, res) => {
             email === undefined ||
             phoneNumber === undefined ||
             accountHolder === undefined ||
-            bankFrom === undefined) {
-            res.status(404).json({ message: "Lengkapi semua field" });
+            bankFrom === undefined ||
+            bankTo === undefined
+        ) {
+            return res.status(404).json({ message: "Lengkapi semua field" });
         }
 
-        const item = await Item.findOne({ _id: idItem });
+        const item = await Item.findOne({ _id: itemId });
 
         if (!item) {
             return res.status(404).json({ message: "Item not found" });
@@ -154,7 +172,7 @@ const bookingPage = async (req, res) => {
         let total = item.price * duration;
         let tax = total * 0.10;
 
-        const invoice = Math.floor(1000000 + Math.random() * 9000000);
+        const invoice = Math.floor(1000000 + Math.random() * 9000000).toString();
 
         const member = await Member.create({
             firstName,
@@ -163,25 +181,27 @@ const bookingPage = async (req, res) => {
             phoneNumber
         });
 
+        const bank = await Bank.findOne({ bankName: bankTo })
+
         const newBooking = {
             invoice,
-            bookingStartDate,
-            bookingEndDate,
+            bookingStartDate: new Date(bookingStartDate),
+            bookingEndDate: new Date(bookingEndDate),
             total: total += tax,
             itemId: {
-                _id: item.id,
+                id: item.id,
                 title: item.title,
                 price: item.price,
-                duration: duration
+                duration: parseInt(duration)
             },
+            bankId: bank.id,
             memberId: member.id,
             payments: {
                 proofPayment: `images/${req.file.filename}`,
-                bankFrom: bankFrom,
-                accountHolder: accountHolder
+                bankFrom,
+                accountHolder
             }
         }
-
         const booking = await Booking.create(newBooking);
 
         res.status(201).json({ message: "Success Booking", booking });
@@ -190,8 +210,6 @@ const bookingPage = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 }
-
-
 
 const apiController = {
     landingPage,
