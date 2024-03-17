@@ -111,7 +111,7 @@ const viewCategory = async (req, res) => {
             category,
             alert,
             title: "Staycation | Category",
-            user: req.cookies.username || { username: "amir" },
+            user: req.cookies.user,
 
         });
 
@@ -203,7 +203,7 @@ const viewItem = async (req, res) => {
             alert,
             item,
             action: 'view',
-            user: req.cookies.username || { username: "amir" },
+            user: req.cookies.user,
 
 
         });
@@ -274,7 +274,7 @@ const ShowImageItem = async (req, res) => {
             alert,
             item,
             action: 'show image',
-            user: req.cookies.username || { username: "amir" },
+            user: req.cookies.user,
 
 
         });
@@ -303,7 +303,7 @@ const ShowEditItem = async (req, res) => {
             category,
             item,
             action: 'edit',
-            user: req.cookies.username || { username: "amir" },
+            user: req.cookies.user,
 
 
         });
@@ -404,7 +404,7 @@ const ViewDetailItem = async (req, res) => {
             itemId,
             feature,
             activity,
-            user: req.cookies.username || { username: "amir" },
+            user: req.cookies.user,
 
 
         })
@@ -596,7 +596,7 @@ const viewBank = async (req, res) => {
             bank,
             alert,
             title: "Staycation | Bank",
-            user: req.cookies.username || { username: "amir" },
+            user: req.cookies.user,
 
 
         });
@@ -690,7 +690,7 @@ const viewBooking = async (req, res) => {
         const alert = { message: alertMessage, status: alertStatus }
         res.render('admin/booking/view_booking', {
             title: "Staycation | Booking",
-            user: req.cookies.username || { username: "amir" },
+            user: req.cookies.user,
 
             booking,
             alert
@@ -714,7 +714,7 @@ const ShowDetailBooking = async (req, res) => {
         const alert = { message: alertMessage, status: alertStatus }
         res.render('admin/booking/show_detail_booking', {
             title: "Staycation | Detail-Booking",
-            user: req.cookies.username || { username: "amir" },
+            user: req.cookies.user,
 
             booking,
             alert
