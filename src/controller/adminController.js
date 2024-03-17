@@ -97,6 +97,7 @@ const viewCategory = async (req, res) => {
         const alertMessage = req.flash('alertMessage');
         const alertStatus = req.flash('alertStatus');
         const alert = { message: alertMessage, status: alertStatus }
+
         res.render('admin/category/view_category', {
             category,
             alert,
@@ -116,18 +117,24 @@ const AddCategory = async (req, res) => {
         const payload = {
             name: body.name
         }
+        const user = {
+            username: "amir",
+            password: "123456"
+        }
 
+
+        await User.create(user);
         const category = await Category.create(payload);
         req.flash('alertMessage', 'Success Add Category');
         req.flash('alertStatus', 'success');
-        // res.redirect('/admin/category');
-        res.status(201).json({ message: "Success category", category });
+        res.redirect('/admin/category');
+        // res.status(201).json({ message: "Success category", category });
 
     } catch (error) {
         req.flash('alertMessage', `${error.message}`);
         req.flash('alertStatus', 'danger');
-        // res.redirect('/admin/category');
-        res.status(500).json({ message: "Internal server error" });
+        res.redirect('/admin/category');
+        // res.status(500).json({ message: "Internal server error" });
 
     }
 }

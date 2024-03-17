@@ -59,7 +59,7 @@ app.use(function (err, req, res, next) {
 });
 
 // Menghubungkan ke database
-connectDB('mongodb://127.0.0.1/db-travelbwa');
+connectDB('mongodb+srv://amirkholiluddin:bwamern@cluster0.xgq0f3k.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', 'db-bwatravel');
 
 // Mulai server
 app.listen(port, () => {
