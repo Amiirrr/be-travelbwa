@@ -9,7 +9,7 @@ const admin = express.Router();
 admin.get('/signin', adminController.viewSignIn);
 admin.post('/signin', adminController.ActionSignIn);
 admin.get('/logout', adminController.ActionLogout);
-// admin.use(auth);
+admin.use(auth);
 
 //dashboard
 admin.get('/dashboard', adminController.viewDashboard);
