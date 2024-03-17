@@ -18,7 +18,9 @@ const viewSignIn = (req, res) => {
         const alertStatus = req.flash('alertStatus');
         const alert = { message: alertMessage, status: alertStatus }
 
-        if (req.session.user === null || req.session.user === undefined) {
+        console.log(req.cookies)
+
+        if (req.cookies.user === null || req.cookies.user === undefined) {
             res.render('index', {
                 title: "Staycation | Login",
                 alert
@@ -36,6 +38,7 @@ const ActionSignIn = async (req, res) => {
         const { username, password } = req.body
 
         const user = await User.findOne({ username: username })
+
         if (!user) {
             req.flash('alertMessage', 'Username Salah');
             req.flash('alertStatus', 'danger');
@@ -43,16 +46,19 @@ const ActionSignIn = async (req, res) => {
         }
 
         const isPasswordMatch = await bcrypt.compare(password, user.password);
+
         if (!isPasswordMatch) {
             req.flash('alertMessage', 'Password Salah');
             req.flash('alertStatus', 'danger');
             return res.redirect('/admin/signin')
         }
 
-        req.session.user = {
-            id: user._id,
-            username: user.username
-        }
+        res.cookie("user", user, {
+            expires: new Date(Date.now() + 1000 * 60 * 60 * 24), // one day
+            httpOnly: true,
+            secure: true,
+            sameSite: "none"
+        });
 
         res.redirect('/admin/dashboard')
 
@@ -63,7 +69,8 @@ const ActionSignIn = async (req, res) => {
 
 const ActionLogout = async (req, res) => {
     try {
-        req.session.destroy();
+        // req.session.destroy();
+        res.clearCookie('user'); // Menghapus cookie 'user'
         res.redirect('/admin/singin')
 
     } catch (error) {
@@ -77,9 +84,11 @@ const viewDashboard = async (req, res) => {
         const member = await Member.find()
         const booking = await Booking.find();
         const item = await Item.find()
+
+        console.log(req.cookies.user.username)
         res.render('admin/dashboard/view_dashboard', {
             title: "Staycation | Dashboard",
-            user: req.session.user || { username: "amir" },
+            user: req.cookies.user,
             member,
             booking,
             item
@@ -102,7 +111,8 @@ const viewCategory = async (req, res) => {
             category,
             alert,
             title: "Staycation | Category",
-            user: req.session.user || { username: "amir" },
+            user: req.cookies.username || { username: "amir" },
+
         });
 
     } catch (error) {
@@ -193,7 +203,8 @@ const viewItem = async (req, res) => {
             alert,
             item,
             action: 'view',
-            user: req.session.user || { username: "amir" },
+            user: req.cookies.username || { username: "amir" },
+
 
         });
     } catch (error) {
@@ -263,7 +274,8 @@ const ShowImageItem = async (req, res) => {
             alert,
             item,
             action: 'show image',
-            user: req.session.user || { username: "amir" },
+            user: req.cookies.username || { username: "amir" },
+
 
         });
 
@@ -291,7 +303,8 @@ const ShowEditItem = async (req, res) => {
             category,
             item,
             action: 'edit',
-            user: req.session.user || { username: "amir" },
+            user: req.cookies.username || { username: "amir" },
+
 
         });
 
@@ -391,7 +404,8 @@ const ViewDetailItem = async (req, res) => {
             itemId,
             feature,
             activity,
-            user: req.session.user || { username: "amir" },
+            user: req.cookies.username || { username: "amir" },
+
 
         })
 
@@ -582,7 +596,8 @@ const viewBank = async (req, res) => {
             bank,
             alert,
             title: "Staycation | Bank",
-            user: req.session.user || { username: "amir" },
+            user: req.cookies.username || { username: "amir" },
+
 
         });
     } catch (error) {
@@ -675,7 +690,8 @@ const viewBooking = async (req, res) => {
         const alert = { message: alertMessage, status: alertStatus }
         res.render('admin/booking/view_booking', {
             title: "Staycation | Booking",
-            user: req.session.user || { username: "amir" },
+            user: req.cookies.username || { username: "amir" },
+
             booking,
             alert
         });
@@ -698,7 +714,8 @@ const ShowDetailBooking = async (req, res) => {
         const alert = { message: alertMessage, status: alertStatus }
         res.render('admin/booking/show_detail_booking', {
             title: "Staycation | Detail-Booking",
-            user: req.session.user || { username: "amir" },
+            user: req.cookies.username || { username: "amir" },
+
             booking,
             alert
         });
