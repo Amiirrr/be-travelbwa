@@ -14,5 +14,11 @@
                 "Access-Control-Allow-Credentials": "true"
             }
         }
+    ],
+    "crons": [
+        {
+            "path": "/api/cron",
+            "schedule": "0 5 * * *"
+        }
     ]
 }
