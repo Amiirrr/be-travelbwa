@@ -15,6 +15,10 @@ const port = 3000;
 const __dirname = path.resolve();
 
 // Middleware untuk konten statis dan view engine
+app.use(cors({
+    credentials: true,
+    origin: ['http://localhost:5173', 'http://localhost:3000', 'https://be-travelbwa.vercel.app'],
+}))
 app.set('views', path.join(__dirname, 'src', 'views'));
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, '/public')))
@@ -38,10 +42,6 @@ app.use(router);
 
 // Middleware untuk CORS
 // app.use(cors())
-app.use(cors({
-    origin: 'http://localhost:3001',
-    credentials: true,
-}))
 
 // Penanganan rute untuk rute '/'
 app.get('/', (req, res) => {
