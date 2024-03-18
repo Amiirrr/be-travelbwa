@@ -39,7 +39,8 @@ app.use(router);
 // Middleware untuk CORS
 app.use(cors({
     credentials: true,
-    origin: ['http://localhost:5173', 'http://localhost:3000', 'https://be-travelbwa.vercel.app']
+    origin: ['http://localhost:3000']
+    // origin: ['http://localhost:5173', 'http://localhost:3000', 'https://be-travelbwa.vercel.app']S
 }))
 
 // Penanganan rute untuk rute '/'
