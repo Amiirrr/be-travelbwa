@@ -18,7 +18,7 @@ const __dirname = path.resolve();
 
 app.use(cors({
     credentials: true,
-    origin: ['http://localhost:5173', 'http://localhost:3000', 'https://be-travelbwa.vercel.app'],
+    origin: ['http://localhost:3000', 'https://be-travelbwa.vercel.app'],
 }))
 app.set('views', path.join(__dirname, 'src', 'views'));
 app.set('view engine', 'ejs');
