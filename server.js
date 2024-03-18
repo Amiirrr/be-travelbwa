@@ -15,6 +15,13 @@ const port = 3000;
 const __dirname = path.resolve();
 
 // Middleware untuk konten statis dan view engine
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173, http://localhost:3000, https://be-travelbwa.vercel.app');
+    res.setHeader('Access-Control-Allow-Methods', '*');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    next();
+});
 app.use(cors({
     credentials: true,
     origin: ['http://localhost:5173', 'http://localhost:3000', 'https://be-travelbwa.vercel.app'],
